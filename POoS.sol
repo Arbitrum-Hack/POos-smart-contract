@@ -7,21 +7,29 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 contract POoS is ERC1155, Ownable {
     constructor(string memory URI, address owner) ERC1155(URI) Ownable(owner) {}
 
-    function mint(address account, uint256 id, uint256 amount, bytes memory data)
+    function mint(address account, uint256 id, uint256 amount)
         public
         onlyOwner
     {
-        _mint(account, id, amount, data);
+        _mint(account, id, amount, "");
     }
 }
 
 contract POoSFactory {
+
+
+
+    mapping (address => address[]) public ownerToDeployedContract;
     event NewPOoSTokenCreated (address, string, address);
-    function CreateNewToken(string memory URI) external returns(POoS){
-        POoS newPOoSToken = new POoS (URI, msg.sender);
-        emit NewPOoSTokenCreated (address(newPOoSToken), URI, msg.sender);
-        return newPOoSToken;
+
+    function createNewPOoS(string memory URI) external returns(POoS){
+        POoS newPOoS = new POoS (URI, msg.sender);
+        ownerToDeployedContract[msg.sender].push(address(newPOoS));
+        emit NewPOoSTokenCreated (address(newPOoS), URI, msg.sender);
+        return newPOoS;
     }
 
-    //try
+
+
+    
 }
